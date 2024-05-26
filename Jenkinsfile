@@ -17,5 +17,25 @@ pipeline {
 		}
 	} 
   }
+
+   stage('Build') {
+    steps {	
+      withDockerRegistry([credentialsId: "dockerlogin", url: ""]) {
+        script {
+          app = docker.build("zdevsecops")
+        }
+      }
+		}
+	} 
+  
+   stage('Push') {
+    steps {	
+      script {
+        docker.withRegistry('https://730335353514.dkr.ecr.us-west-2.amazonaws.com', 'ecr:us-west-2:aws-credentials') {
+          app.push("latest")
+        }
+      }
+		}
+	} 
  }	
 }
