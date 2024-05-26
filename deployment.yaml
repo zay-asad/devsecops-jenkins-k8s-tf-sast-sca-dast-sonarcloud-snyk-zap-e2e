@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zdevsecops-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zdevsecops
+  template:
+    metadata:
+      labels:
+        app: zdevsecops
+    spec:
+      containers:
+      - name: zdevsecops
+        image: 730335353514.dkr.ecr.us-west-2.amazonaws.com/zdevsecops
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+# service type loadbalancer       
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: zdevsecops
+    k8s-app: zdevsecops
+  name: zdevsecops
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  type: LoadBalancer
+  selector:
+    app: zdevsecops
